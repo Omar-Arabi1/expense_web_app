@@ -6,7 +6,6 @@
         <title>Expenses</title>
     </head>
     <body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
-        {% if error %}<p><strong>{{ error }}</strong></p>{% endif %}
         <form hx-post="{% url 'expense:add_expense' %}" hx-swap="outerHTML" hx-target="body">
         {% csrf_token %}
             <input type="text" placeholder="add expense" name="expense">
