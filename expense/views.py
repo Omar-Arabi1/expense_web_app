@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404
-from django.http import HttpRequest, HttpResponseRedirect
+from django.http import HttpRequest, HttpResponseRedirect, QueryDict
 from django.urls import reverse
 from django.core.exceptions import BadRequest
 
@@ -34,4 +34,33 @@ def add_expense(request: HttpRequest):
 def remove_expense(request: HttpRequest, expense_id: int):
     expense = get_object_or_404(Expense, id=expense_id)
     expense.delete()
+    return HttpResponseRedirect(reverse("expense:index"))
+
+
+def update_expense(request: HttpRequest, expense_id: int):
+    expense = get_object_or_404(Expense, id=expense_id)
+    data = QueryDict(request.body)
+
+    price = data.get("price")
+    new_expense = data.get("expense")
+    if price == "" and new_expense == "":
+        return HttpResponseRedirect(reverse("expense:index"))
+
+    try:
+        if price != "":
+            price = float(price)
+    except Exception:
+        raise BadRequest("invalid price")
+
+    if price != "" and price <= 0:
+        raise BadRequest("price is smaller than or equal to zero")
+
+    if new_expense != "" and new_expense.strip() == "":
+        raise BadRequest("expense is empty")
+
+    if price != "":
+        expense.price = price
+    if new_expense != "":
+        expense.expense = new_expense
+    expense.save()
     return HttpResponseRedirect(reverse("expense:index"))

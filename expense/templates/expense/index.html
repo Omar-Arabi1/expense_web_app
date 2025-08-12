@@ -15,7 +15,12 @@
         <ul>
             {% for expense in expenses %}
             <li>
-                {{ expense.expense }}
+                <p>{{ expense.expense }}</p>
+                <form hx-put="{% url 'expense:update_expense' expense.id %}" hx-swap="outerHTML" hx-target="body">
+                    <input type="text" placeholder="update expense" name="expense">
+                    <input type="text" placeholder="update price" name="price">
+                    <button type="submit">update</button>
+                </form>
                 <button hx-delete="{% url 'expense:remove_expense' expense.id %}" hx-swap="outerHTML" hx-target="body" type="submit">delete</button>
             </li>
             {% endfor %}
