@@ -2,14 +2,21 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8">
+        <script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.6/dist/htmx.min.js"></script>
         <title>Expenses</title>
     </head>
-    <body>
-        <ul>
+    <body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
         {% if error %}<p><strong>{{ error }}</strong></p>{% endif %}
-        {% for expense in expenses %}
-            <li>expense</li>
-        {% endfor %}
+        <form hx-post="{% url 'expense:add_expense' %}" hx-swap="outerHTML" hx-target="body">
+        {% csrf_token %}
+            <input type="text" placeholder="add expense" name="expense">
+            <input type="text" placeholder="add price" name="price">
+            <button type="submit">add</button>
+        </form>
+        <ul>
+            {% for expense in expenses %}
+            <li>{{ expense.expense }}</li>
+            {% endfor %}
         </ul>
     </body>
 </html>
