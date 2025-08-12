@@ -14,7 +14,10 @@
         </form>
         <ul>
             {% for expense in expenses %}
-            <li>{{ expense.expense }}</li>
+            <li>
+                {{ expense.expense }}
+                <button hx-delete="{% url 'expense:remove_expense' expense.id %}" hx-swap="outerHTML" hx-target="body" type="submit">delete</button>
+            </li>
             {% endfor %}
         </ul>
     </body>

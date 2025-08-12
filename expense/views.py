@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.http import HttpRequest, HttpResponseRedirect
 from django.urls import reverse
 from django.core.exceptions import BadRequest
@@ -28,4 +28,10 @@ def add_expense(request: HttpRequest):
         raise BadRequest("expense is empty")
     new_expense = Expense(expense=new_expense, price=price)
     new_expense.save()
+    return HttpResponseRedirect(reverse("expense:index"))
+
+
+def remove_expense(request: HttpRequest, expense_id: int):
+    expense = get_object_or_404(Expense, id=expense_id)
+    expense.delete()
     return HttpResponseRedirect(reverse("expense:index"))
