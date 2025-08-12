@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Expenses</title>
+    </head>
+    <body>
+        <ul>
+        {% if error %}<p><strong>{{ error }}</strong></p>{% endif %}
+        {% for expense in expenses %}
+            <li>expense</li>
+        {% endfor %}
+        </ul>
+    </body>
+</html>
