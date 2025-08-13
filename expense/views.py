@@ -1,4 +1,4 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, get_list_or_404
 from django.http import HttpRequest, HttpResponseRedirect, QueryDict
 from django.urls import reverse
 from django.core.exceptions import BadRequest
@@ -8,7 +8,8 @@ from .models import Expense
 
 def index(request: HttpRequest):
     expenses = Expense.objects.all()
-    return render(request, "expense/index.html", {"expenses": expenses})
+    lost = request.GET.get("lost")
+    return render(request, "expense/index.html", {"expenses": expenses, "lost": lost})
 
 
 def add_expense(request: HttpRequest):
@@ -64,3 +65,13 @@ def update_expense(request: HttpRequest, expense_id: int):
         expense.expense = new_expense
     expense.save()
     return HttpResponseRedirect(reverse("expense:index"))
+
+
+def calculate(request: HttpRequest):
+    expenses = get_list_or_404(Expense)
+    prices = []
+    for expense in expenses:
+        prices.append(expense.price)
+    lost = sum(prices)
+    target_url = f"{reverse("expense:index")}?lost={lost}"
+    return HttpResponseRedirect(target_url)

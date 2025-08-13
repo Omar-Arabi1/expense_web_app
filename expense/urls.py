@@ -7,5 +7,6 @@ urlpatterns = [
     path("", views.index, name="index"),
     path("add_expense", views.add_expense, name="add_expense"),
     path("remove_expense/<int:expense_id>", views.remove_expense, name="remove_expense"),
-    path("update_expense/<int:expense_id>", views.update_expense, name="update_expense")
+    path("update_expense/<int:expense_id>", views.update_expense, name="update_expense"),
+    path("calculate", views.calculate, name="calculate"),
 ]
