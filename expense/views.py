@@ -1,7 +1,9 @@
 from django.shortcuts import render, get_object_or_404, get_list_or_404
-from django.http import HttpRequest, HttpResponseRedirect, QueryDict
+from django.http import HttpRequest, HttpResponseRedirect, QueryDict, HttpResponse
 from django.urls import reverse
 from django.core.exceptions import BadRequest
+import csv
+import io
 
 from .models import Expense
 
@@ -73,5 +75,24 @@ def calculate(request: HttpRequest):
     for expense in expenses:
         prices.append(expense.price)
     lost = sum(prices)
-    target_url = f"{reverse("expense:index")}?lost={lost}"
+    target_url = f"{reverse('expense:index')}?lost={lost}"
     return HttpResponseRedirect(target_url)
+
+
+def export(request: HttpRequest):
+    expenses = get_list_or_404(Expense)
+    headers = ["expense", "price"]
+    rows = []
+    for expense in expenses:
+        rows.append([expense.expense, expense.price])
+
+    output_buffer = io.StringIO()
+    writer = csv.writer(output_buffer)
+    writer.writerow(headers)
+    writer.writerows(rows)
+
+    csv_content = output_buffer.getvalue()
+    output_buffer.close()
+    response = HttpResponse(csv_content, content_type="text/csv")
+    response["Content-Disposition"] = 'attachment; filename="expenses.csv"'
+    return response
